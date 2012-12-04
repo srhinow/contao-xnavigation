@@ -64,25 +64,29 @@ class DefaultPageProvider implements ItemDataSource, ItemFactory
         Generator $generator,
         Model $model
     ) {
-        $item = new Item($model);
-        $item->setLabel($model->title);
-        $item->setTitle($model->pageTitle ? : $model->title);
-        $item->setUrl(Controller::generateFrontendUrl($model->row()));
-        $item->setPosition($model->sorting);
+        if ($model instanceof PageModel) {
+            $item = new Item($model);
+            $item->setLabel($model->title);
+            $item->setTitle($model->pageTitle ? : $model->title);
+            $item->setUrl(Controller::generateFrontendUrl($model->row()));
+            $item->setPosition($model->sorting);
 
-        if ($GLOBALS['objPage']) {
-            $item->setTrail(in_array($model->id, $GLOBALS['objPage']->trail));
-            $item->setActive($model->id == $GLOBALS['objPage']->id);
+            if ($GLOBALS['objPage']) {
+                $item->setTrail(in_array($model->id, $GLOBALS['objPage']->trail));
+                $item->setActive($model->id == $GLOBALS['objPage']->id);
+            }
+
+            if ($model->robots != 'index,follow') {
+                $item->setAttribute('rel', $model->robots);
+            }
+            if ($model->cssClass) {
+                $item->setAttribute('class', array($model->cssClass));
+            }
+
+            return $item;
         }
 
-        if ($model->robots != 'index,follow') {
-            $item->setAttribute('rel', $model->robots);
-        }
-        if ($model->cssClass) {
-            $item->setAttribute('class', array($model->cssClass));
-        }
-
-        return $item;
+        return false;
     }
 
     /**
