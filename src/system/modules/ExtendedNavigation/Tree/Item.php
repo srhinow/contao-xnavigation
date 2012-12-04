@@ -310,7 +310,7 @@ class Item
     public function addChildren(Item $children)
     {
         $this->children->add($children);
-            $children->setParent($this);
+        $children->setParent($this);
     }
 
     /**
